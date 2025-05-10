@@ -1,19 +1,9 @@
-# 环境变量
-.env
-
-# SSL证书
-ssl/
-
-# 数据库
-data/*.db
-data/backup/
-
-# Python
+# Python 文件
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 .Python
-env/
 build/
 develop-eggs/
 dist/
@@ -25,23 +15,67 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
-# 虚拟环境
+# 日志
+*.log
+logs/
+app.log
+cli.log
+
+# 数据目录
+data/
+models/
+
+# SSL 证书
+ssl/
+*.pem
+*.key
+*.crt
+
+# 环境变量
+.env
+.venv
+env/
 venv/
 ENV/
-.env/
-.venv/
-AItoy/
+env.bak/
+venv.bak/
 
-# IDE
+# IDE/编辑器文件
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
+.spyderproject
+.spyproject
+.ropeproject
+.cursor/
 
-# 系统文件
+# 操作系统相关文件
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# 临时文件
+*.tmp
+.ipynb_checkpoints
+
+# 音频文件 (除非是测试文件)
+*.wav
+*.mp3
+*.pcm
+!test_audio.pcm
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3

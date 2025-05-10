@@ -74,6 +74,11 @@
    - 不断优化互动策略
    - 成长记录可供回顾
 
+4. **高可靠性设计**
+   - 完善的错误处理机制
+   - 自动重连和网络故障恢复
+   - 数据库连接池和事务管理
+
 ## 🌈 使用建议
 
 1. **固定时间互动**
@@ -94,9 +99,10 @@
 ## 🚀 快速开始
 
 ### 环境要求
-- Python 3.10+
+- Python 3.8+
 - FFmpeg (音频处理)
 - 有效的SSL证书
+- 麦克风和扬声器设备
 
 ### 安装步骤
 
@@ -108,8 +114,16 @@ cd AI_toy
 
 2. **配置环境**
 ```bash
-conda create -n AItoy python=3.10
+# 使用pip
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+
+# 或使用conda
+conda create -n AItoy python=3.8
 conda activate AItoy
+
+# 安装依赖
 pip install -r requirements.txt
 ```
 
@@ -117,9 +131,6 @@ pip install -r requirements.txt
 ```bash
 # 在项目根目录创建 .env 文件
 echo "DEEPSEEK_API_KEY=your_api_key_here" > .env
-echo "XUNFEI_APPID=your_appid" >> .env
-echo "XUNFEI_APIKEY=your_apikey" >> .env
-echo "XUNFEI_APISECRET=your_apisecret" >> .env
 ```
 
 4. **生成SSL证书**
@@ -128,12 +139,35 @@ mkdir -p ssl
 openssl req -x509 -newkey rsa:4096 -keyout ssl/key.pem -out ssl/cert.pem -days 365 -nodes
 ```
 
-5. **启动服务**
+5. **运行配置检查工具**
+```bash
+python check_config.py
+```
+这个工具会检查您的环境配置、依赖和必要的文件是否存在，并提供详细的报告。
+
+6. **启动服务器**
 ```bash
 python main.py
 ```
+服务器将在 https://localhost:8001 启动(首次访问需信任SSL证书)
 
-访问 https://localhost:8001 (首次访问需信任SSL证书)
+7. **使用命令行客户端**
+```bash
+python cli.py
+```
+命令行客户端提供文本和语音两种交互模式。
+
+## 🖥️ 使用方式
+
+### Web界面
+- 访问 https://localhost:8001
+- 点击麦克风按钮开始语音对话
+- 或在文本框中输入消息
+
+### 命令行客户端
+- 选择模式1进行语音对话
+- 选择模式2进行文本对话
+- 按Ctrl+C退出程序
 
 ## 🔧 技术架构
 
@@ -163,53 +197,17 @@ python main.py
      * AgentExecutor工具函数调用链
      * 自定义工具函数集成
      * 动态提示词模板
-   - **LangGraph工作流**：
-     * 基于DAG的对话流程控制
-     * 状态转换和任务编排
-     * 多轮对话管理
-     * 条件分支和循环处理
    - **提示词模板**：
      * 针对儿童的交互设计
      * 情感理解和回应
      * 安全性过滤
 
-### LangChain & LangGraph 实现
-
-1. **LangChain组件**：
-   - **记忆管理**：
-     * 使用ConversationBufferMemory存储对话历史
-     * 支持对话上下文的检索和维护
-     * 自动管理对话长度和清理
-   - **工具集成**：
-     * 情感分析工具
-     * 记忆检索工具
-     * 状态更新工具
-     * 主题管理工具
-   - **代理执行器**：
-     * 基于OpenAI函数调用的工具选择
-     * 自动工具调用和结果处理
-     * 错误处理和重试机制
-
-2. **LangGraph工作流**：
-   - **对话状态图**：
-     * 初始状态 -> 意图理解
-     * 意图理解 -> 工具选择
-     * 工具选择 -> 执行操作
-     * 执行操作 -> 响应生成
-   - **状态转换**：
-     * 基于对话内容的动态转换
-     * 条件判断和分支处理
-     * 异常处理和回退机制
-   - **任务编排**：
-     * 并行任务处理
-     * 依赖关系管理
-     * 任务优先级控制
-
 3. **记忆系统**
    - **本地数据库**：
      * SQLite持久化存储
-     * 对话历史记录
-     * 用户偏好管理
+     * 连接池和事务管理
+     * 索引优化提升性能
+     * 对话历史记录和用户偏好管理
    - **情感分析系统**：
      * 实时情绪识别
      * 情感变化追踪
@@ -219,92 +217,122 @@ python main.py
      * 对话主题管理
      * 长期记忆存储
 
+4. **错误处理和恢复**
+   - **网络请求重试机制**：
+     * 指数退避策略
+     * 速率限制自适应
+     * 超时控制和请求取消
+   - **WebSocket连接管理**：
+     * 自动心跳检测
+     * 不活跃连接清理
+     * 断线重连机制
+
 ### 项目结构
 ```
 AI_toy/
 ├── app/
 │   ├── agent/             # AI代理相关代码
-│   │   ├── companion_agent.py
-│   │   ├── tools.py
-│   │   └── prompts.py
+│   │   ├── companion_agent.py  # AI伴侣核心逻辑
+│   │   ├── tools.py            # 工具函数集
+│   │   └── prompts.py          # 提示词模板
 │   ├── core/             # 核心功能
-│   │   ├── memory.py
-│   │   ├── speech.py
-│   │   └── state.py
+│   │   ├── memory.py     # 记忆管理
+│   │   ├── speech.py     # 语音处理
+│   │   └── state.py      # 状态管理
 │   └── web/              # Web服务
-│       └── server.py
+│       ├── server.py     # WebSocket服务器
+│       └── static/       # 静态资源
 ├── config/               # 配置文件
-├── models/              # AI模型
-├── ssl/                 # SSL证书
-├── main.py             # 程序入口
-└── requirements.txt    # 依赖列表
+│   └── settings.py       # 全局设置
+├── ssl/                  # SSL证书
+├── data/                 # 数据存储
+├── database.py           # 数据库管理
+├── main.py               # Web服务入口
+├── cli.py                # 命令行客户端
+├── check_config.py       # 配置检查工具
+├── view_memories.py      # 记忆查看工具
+└── requirements.txt      # 依赖列表
 ```
+
+## 🛠️ 优化特性
+
+1. **内存管理优化**
+   - 使用连接池管理数据库连接
+   - 上下文管理器确保资源释放
+   - JSON序列化替代不安全的eval()
+
+2. **性能优化**
+   - 数据库索引提升查询速度
+   - WebSocket连接池管理
+   - 不活跃连接自动清理
+
+3. **错误处理增强**
+   - 全局异常处理机制
+   - 详细的日志记录
+   - 用户友好的错误提示
+
+4. **网络请求管理**
+   - 自适应重试策略
+   - 速率限制处理
+   - 超时控制
+
+5. **用户体验改进**
+   - 命令行进度条显示
+   - 详细的状态提示
+   - 错误恢复自动化
 
 ## 🔍 常见问题
 
 ### 1. 连接问题
-- 确保SSL证书配置正确
-- 检查端口8001是否被占用
-- 验证WebSocket连接状态
+- **问题**: 无法连接到服务器
+- **解决方案**: 
+  - 运行`python check_config.py`检查配置
+  - 确保SSL证书配置正确
+  - 检查端口8001是否被占用
+  - 验证WebSocket连接状态
 
 ### 2. 音频问题
-- 确保麦克风权限已授权
-- 检查音频输入设备
-- 验证FFmpeg安装
+- **问题**: 无法录制或播放音频
+- **解决方案**:
+  - 检查麦克风和扬声器设备
+  - 使用`python check_config.py`验证音频设备
+  - 确认授予浏览器麦克风权限
 
-### 3. 性能优化
-- 使用本地模型降低延迟
-- 优化数据库查询
-- 实现缓存机制
+### 3. API密钥问题
+- **问题**: DeepSeek API调用失败
+- **解决方案**:
+  - 确认.env文件中有正确的DEEPSEEK_API_KEY
+  - 验证API密钥未过期
+  - 检查网络连接状态
 
-## 📝 开发计划
+### 4. 数据库问题
+- **问题**: 数据库错误或连接失败
+- **解决方案**:
+  - 确保data目录存在且有写入权限
+  - 检查SQLite安装
+  - 尝试删除并重新创建数据库文件
 
-- [ ] 增加更多互动游戏
-- [ ] 优化语音识别准确率
-- [ ] 添加家长控制面板
-- [ ] 扩展情感分析能力
+## 📝 维护与更新
 
-## 🤝 贡献指南
+### 日志文件
+系统会生成以下日志文件:
+- `app.log` - 主服务器日志
+- `cli.log` - 命令行客户端日志
 
-1. Fork 项目
-2. 创建特性分支
-3. 提交更改
-4. 发起 Pull Request
+### 定期任务
+- 定期备份数据目录
+- 检查和更新SSL证书
+- 更新API密钥
 
 ## 📄 许可证
 
-MIT License
+本项目采用MIT许可证。详见LICENSE文件。
 
 ## 🙏 致谢
 
-- DeepSeek API
-- Whisper 模型
-- Edge TTS
-- LangChain 框架
-
-## 📚 更多资源
-
-- [API文档](docs/api.md)
-- [开发指南](docs/development.md)
-- [部署文档](docs/deployment.md)
-
-### 系统架构图
-```
-AI_toy系统架构
-├── 前端层
-│   ├── 语音输入/输出
-│   ├── WebSocket通信
-│   └── 用户界面
-├── 服务层
-│   ├── FastAPI服务器
-│   ├── 讯飞语音服务
-│   └── Edge TTS服务
-├── 核心层
-│   ├── 对话管理(LangChain)
-│   ├── AI对话(DeepSeek)
-│   └── 状态管理
-└── 数据层
-    ├── SQLite数据库
-    ├── 配置文件
-    └── SSL证书
-``` 
+感谢以下开源项目:
+- FastAPI
+- Edge-TTS
+- DeepSeek
+- LangChain
+- SQLite 

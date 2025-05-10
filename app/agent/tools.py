@@ -42,23 +42,37 @@ class EmotionalStateInput(BaseModel):
 
 def create_memory_tools(memory) -> List[Tool]:
     """创建记忆相关的工具"""
-    def get_recent_memories(count: int = 5) -> str:
+    def get_recent_memories(memory_input: MemoryCountInput) -> str:
         """获取最近的记忆"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    def add_memory(content: str) -> str:
+    def add_memory(memory_input: AddMemoryInput) -> str:
         """添加新的记忆"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    async def async_get_recent_memories(count: int = 5) -> str:
+    async def async_get_recent_memories(memory_input: MemoryCountInput) -> str:
         """异步获取最近的记忆"""
-        memories = await memory.get_recent_memories(count)
-        return "\n".join([f"{m.time}: {m.content}" for m in memories])
+        try:
+            memories = await memory.get_recent_memories(memory_input.count)
+            if not memories:
+                return "没有找到任何记忆"
+            return "\n".join([f"{m.time}: {m.content}" for m in memories])
+        except Exception as e:
+            print(f"获取记忆错误: {e}")
+            return "获取记忆时发生错误"
 
-    async def async_add_memory(content: str) -> str:
+    async def async_add_memory(memory_input: AddMemoryInput) -> str:
         """异步添加新的记忆"""
-        await memory.add_memory(content)
-        return "记忆已保存"
+        try:
+            await memory.add_memory(
+                content=memory_input.content,
+                memory_type=memory_input.memory_type,
+                metadata=memory_input.metadata
+            )
+            return "记忆已保存"
+        except Exception as e:
+            print(f"添加记忆错误: {e}")
+            return "保存记忆时发生错误"
 
     return [
         Tool(
@@ -74,39 +88,53 @@ def create_memory_tools(memory) -> List[Tool]:
             description="添加新的记忆",
             func=add_memory,
             coroutine=async_add_memory,
-            args_schema=MemoryInput,
+            args_schema=AddMemoryInput,
             return_direct=True
         )
     ]
 
 def create_state_tools(state_manager) -> List[Tool]:
     """创建状态相关的工具"""
-    def update_emotional_state(emotion: str, intensity: float) -> str:
+    def update_emotional_state(state_input: EmotionalStateInput) -> str:
         """更新情感状态"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    def update_topic(topic: str) -> str:
+    def update_topic(topic_input: TopicInput) -> str:
         """更新当前话题"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
     def get_user_info() -> str:
         """获取用户信息"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    async def async_update_emotional_state(emotion: str, intensity: float) -> str:
+    async def async_update_emotional_state(state_input: EmotionalStateInput) -> str:
         """异步更新情感状态"""
-        await state_manager.update_emotional_state(emotion, intensity)
-        return f"情感状态已更新为 {emotion}，强度为 {intensity}"
+        try:
+            await state_manager.update_emotional_state(state_input.emotion, state_input.intensity)
+            return f"情感状态已更新为 {state_input.emotion}，强度为 {state_input.intensity}"
+        except Exception as e:
+            print(f"更新情感状态错误: {e}")
+            return "更新情感状态时发生错误"
 
-    async def async_update_topic(topic: str) -> str:
+    async def async_update_topic(topic_input: TopicInput) -> str:
         """异步更新当前话题"""
-        await state_manager.update_topic(topic)
-        return f"当前话题已更新为: {topic}"
+        try:
+            await state_manager.update_topic(topic_input.topic)
+            return f"当前话题已更新为: {topic_input.topic}"
+        except Exception as e:
+            print(f"更新话题错误: {e}")
+            return "更新话题时发生错误"
 
     async def async_get_user_info() -> str:
         """异步获取用户信息"""
-        user_info = await state_manager.get_user_info()
-        return str(user_info)
+        try:
+            user_info = await state_manager.get_user_info()
+            if not user_info:
+                return "没有获取到用户信息"
+            return str(user_info)
+        except Exception as e:
+            print(f"获取用户信息错误: {e}")
+            return "获取用户信息时发生错误"
 
     return [
         Tool(
@@ -137,21 +165,36 @@ def create_state_tools(state_manager) -> List[Tool]:
 
 def create_speech_tools(speech_processor) -> List[Tool]:
     """创建语音处理相关的工具"""
-    def text_to_speech(text: str) -> bytes:
+    def text_to_speech(speech_input: SpeechInput) -> bytes:
         """文本转语音"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    def speech_to_text(audio_data: bytes) -> str:
+    def speech_to_text(audio_input: AudioInput) -> str:
         """语音转文本"""
-        raise NotImplementedError("只支持异步调用")
+        raise NotImplementedError("请使用异步版本")
 
-    async def async_text_to_speech(text: str) -> bytes:
+    async def async_text_to_speech(speech_input: SpeechInput) -> bytes:
         """异步文本转语音"""
-        return await speech_processor.text_to_speech(text)
+        try:
+            if not speech_input.text:
+                raise ValueError("文本为空")
+            return await speech_processor.text_to_speech(speech_input.text)
+        except Exception as e:
+            print(f"文本转语音错误: {e}")
+            raise
 
-    async def async_speech_to_text(audio_data: bytes) -> str:
+    async def async_speech_to_text(audio_input: AudioInput) -> str:
         """异步语音转文本"""
-        return await speech_processor.speech_to_text(audio_data)
+        try:
+            if not audio_input.audio_data:
+                raise ValueError("音频数据为空")
+            text = await speech_processor.speech_to_text(audio_input.audio_data)
+            if not text:
+                return "没有识别出语音内容"
+            return text
+        except Exception as e:
+            print(f"语音转文本错误: {e}")
+            raise
 
     return [
         Tool(
