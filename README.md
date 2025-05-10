@@ -1,8 +1,12 @@
-# AI 小伙伴 - 儿童智能陪伴系统
+# AI 小伙伴 - 儿童智能陪伴系统 
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/alexzhu0/AI_toy/pulls)
 
 这是一个专门为儿童设计的AI陪伴系统，由一个叫"念念"的AI伙伴陪伴孩子成长。目前主要服务对象是一个叫"帅帅"的5岁小朋友。
 
-## 🌟 特色功能
+<details>
+<summary><b>🌟 特色功能</b></summary>
 
 ### 1. 温暖的语音对话
 - 用温柔的声音和孩子交谈
@@ -39,8 +43,10 @@
   * 想继续之前的话题时
   * 回忆共同的经历时
   * 分享新鲜事物时
+</details>
 
-## 💡 应用场景举例
+<details>
+<summary><b>💡 应用场景举例</b></summary>
 
 ### 日常陪伴
 - 早晨问候："帅帅，早上好！今天想和我说说话吗？"
@@ -56,6 +62,7 @@
 - 兴趣培养："你喜欢画画啊？给我讲讲你画的是什么吧！"
 - 知识探索："想知道为什么天空是蓝色的吗？让我给你解释一下。"
 - 生活技能："我们一起学习整理房间好不好？"
+</details>
 
 ## 🎯 核心优势
 
@@ -79,23 +86,6 @@
    - 自动重连和网络故障恢复
    - 数据库连接池和事务管理
 
-## 🌈 使用建议
-
-1. **固定时间互动**
-   - 每天花10-15分钟和念念聊天
-   - 可以在睡前分享一天的故事
-   - 遇到开心或烦恼时随时倾诉
-
-2. **循序渐进**
-   - 先从简单的对话开始
-   - 慢慢建立信任感
-   - 逐步深入交流
-
-3. **配合家长指导**
-   - 家长可以旁听对话
-   - 根据需要调整互动方式
-   - 与家庭教育相辅相成
-
 ## 🚀 快速开始
 
 ### 环境要求
@@ -108,7 +98,7 @@
 
 1. **克隆仓库**
 ```bash
-git clone https://github.com/yourusername/AI_toy.git
+git clone https://github.com/alexzhu0/AI_toy.git
 cd AI_toy
 ```
 
@@ -143,35 +133,45 @@ openssl req -x509 -newkey rsa:4096 -keyout ssl/key.pem -out ssl/cert.pem -days 3
 ```bash
 python check_config.py
 ```
-这个工具会检查您的环境配置、依赖和必要的文件是否存在，并提供详细的报告。
 
-6. **启动服务器**
+6. **启动服务**
 ```bash
+# 启动服务器
 python main.py
-```
-服务器将在 https://localhost:8001 启动(首次访问需信任SSL证书)
 
-7. **使用命令行客户端**
-```bash
+# 或使用命令行客户端
 python cli.py
 ```
-命令行客户端提供文本和语音两种交互模式。
-
-## 🖥️ 使用方式
-
-### Web界面
-- 访问 https://localhost:8001
-- 点击麦克风按钮开始语音对话
-- 或在文本框中输入消息
-
-### 命令行客户端
-- 选择模式1进行语音对话
-- 选择模式2进行文本对话
-- 按Ctrl+C退出程序
 
 ## 🔧 技术架构
 
-### 核心组件
+<details>
+<summary><b>系统架构</b></summary>
+
+```
+AI_toy系统架构
+├── 前端层
+│   ├── 语音输入/输出
+│   ├── WebSocket通信
+│   └── 用户界面
+├── 服务层
+│   ├── FastAPI服务器
+│   ├── 讯飞语音服务
+│   └── Edge TTS服务
+├── 核心层
+│   ├── 对话管理(LangChain)
+│   ├── AI对话(DeepSeek)
+│   └── 状态管理
+└── 数据层
+    ├── SQLite数据库
+    ├── 配置文件
+    └── SSL证书
+```
+</details>
+
+<details>
+<summary><b>核心组件</b></summary>
+
 1. **语音处理**
    - **讯飞语音识别**：
      * WebSocket实时语音识别
@@ -197,25 +197,16 @@ python cli.py
      * AgentExecutor工具函数调用链
      * 自定义工具函数集成
      * 动态提示词模板
-   - **提示词模板**：
-     * 针对儿童的交互设计
-     * 情感理解和回应
-     * 安全性过滤
 
 3. **记忆系统**
    - **本地数据库**：
      * SQLite持久化存储
      * 连接池和事务管理
      * 索引优化提升性能
-     * 对话历史记录和用户偏好管理
    - **情感分析系统**：
      * 实时情绪识别
      * 情感变化追踪
      * 个性化回应策略
-   - **知识库系统**：
-     * 用户兴趣记录
-     * 对话主题管理
-     * 长期记忆存储
 
 4. **错误处理和恢复**
    - **网络请求重试机制**：
@@ -226,8 +217,11 @@ python cli.py
      * 自动心跳检测
      * 不活跃连接清理
      * 断线重连机制
+</details>
 
-### 项目结构
+<details>
+<summary><b>项目结构</b></summary>
+
 ```
 AI_toy/
 ├── app/
@@ -253,8 +247,10 @@ AI_toy/
 ├── view_memories.py      # 记忆查看工具
 └── requirements.txt      # 依赖列表
 ```
+</details>
 
-## 🛠️ 优化特性
+<details>
+<summary><b>优化特性</b></summary>
 
 1. **内存管理优化**
    - 使用连接池管理数据库连接
@@ -280,63 +276,64 @@ AI_toy/
    - 命令行进度条显示
    - 详细的状态提示
    - 错误恢复自动化
+</details>
 
-## 🔍 常见问题
+## 🔍 常见问题与解决方案
 
-### 1. 连接问题
-- **问题**: 无法连接到服务器
-- **解决方案**: 
-  - 运行`python check_config.py`检查配置
-  - 确保SSL证书配置正确
-  - 检查端口8001是否被占用
-  - 验证WebSocket连接状态
+<details>
+<summary><b>连接问题</b></summary>
 
-### 2. 音频问题
-- **问题**: 无法录制或播放音频
-- **解决方案**:
-  - 检查麦克风和扬声器设备
-  - 使用`python check_config.py`验证音频设备
-  - 确认授予浏览器麦克风权限
+**问题**: 无法连接到服务器
 
-### 3. API密钥问题
-- **问题**: DeepSeek API调用失败
-- **解决方案**:
-  - 确认.env文件中有正确的DEEPSEEK_API_KEY
-  - 验证API密钥未过期
-  - 检查网络连接状态
+**解决方案**: 
+- 运行`python check_config.py`检查配置
+- 确保SSL证书配置正确
+- 检查端口8001是否被占用
+- 验证WebSocket连接状态
+</details>
 
-### 4. 数据库问题
-- **问题**: 数据库错误或连接失败
-- **解决方案**:
-  - 确保data目录存在且有写入权限
-  - 检查SQLite安装
-  - 尝试删除并重新创建数据库文件
+<details>
+<summary><b>音频问题</b></summary>
 
-## 📝 维护与更新
+**问题**: 无法录制或播放音频
 
-### 日志文件
-系统会生成以下日志文件:
-- `app.log` - 主服务器日志
-- `cli.log` - 命令行客户端日志
+**解决方案**:
+- 检查麦克风和扬声器设备
+- 使用`python check_config.py`验证音频设备
+- 确认授予浏览器麦克风权限
+</details>
 
-### 定期任务
-- 定期备份数据目录
-- 检查和更新SSL证书
-- 更新API密钥
+<details>
+<summary><b>API密钥问题</b></summary>
 
-## 📄 许可证
+**问题**: DeepSeek API调用失败
 
-本项目采用MIT许可证。详见LICENSE文件。
+**解决方案**:
+- 确认.env文件中有正确的DEEPSEEK_API_KEY
+- 验证API密钥未过期
+- 检查网络连接状态
+</details>
+
+<details>
+<summary><b>数据库问题</b></summary>
+
+**问题**: 数据库错误或连接失败
+
+**解决方案**:
+- 确保data目录存在且有写入权限
+- 检查SQLite安装
+- 尝试删除并重新创建数据库文件
+</details>
 
 ## 🙏 致谢
 
 感谢以下开源项目:
-- FastAPI
-- Edge-TTS
-- DeepSeek API
-- Whisper 模型
-- LangChain 框架
-- SQLite
+- FastAPI - Web服务框架
+- Edge-TTS - 语音合成技术
+- DeepSeek API - 大型语言模型服务
+- Whisper 模型 - 语音识别
+- LangChain 框架 - 对话管理
+- SQLite - 轻量级数据库
 
 ## 📚 更多资源
 
@@ -344,23 +341,12 @@ AI_toy/
 - [开发指南](docs/development.md)
 - [部署文档](docs/deployment.md)
 
-### 系统架构图
-```
-AI_toy系统架构
-├── 前端层
-│   ├── 语音输入/输出
-│   ├── WebSocket通信
-│   └── 用户界面
-├── 服务层
-│   ├── FastAPI服务器
-│   ├── 讯飞语音服务
-│   └── Edge TTS服务
-├── 核心层
-│   ├── 对话管理(LangChain)
-│   ├── AI对话(DeepSeek)
-│   └── 状态管理
-└── 数据层
-    ├── SQLite数据库
-    ├── 配置文件
-    └── SSL证书
-```
+## 📄 许可证
+
+本项目采用MIT许可证。详见[LICENSE](LICENSE)文件。
+
+---
+
+**项目维护者:** [alexzhu0](https://github.com/alexzhu0)
+
+**最后更新:** 2023年12月
