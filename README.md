@@ -1,4 +1,4 @@
-# AI 小伙伴 - 儿童智能陪伴系统 
+# AI 小伙伴 - 儿童智能陪伴系统 1.2
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/alexzhu0/AI_toy/pulls)
@@ -349,4 +349,4 @@ AI_toy/
 
 **项目维护者:** [alexzhu0](https://github.com/alexzhu0)
 
-**最后更新:** 2023年12月
+**最后更新:** 2025年05月10 日
